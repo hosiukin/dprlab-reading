@@ -1,6 +1,6 @@
 ---
 name: dprlab-reading
-description: Connect to the lab spark clinical-LLM server and run medical-record reading (病历读取/病史提取) workflows. Use whenever the user wants to: connect to spark / set up lab-connect or EasyConnect jump-host SSH / call clinical-qwen36-35b or clinical-qwen3-4b / do 病历读取、病史结构化提取、文本清洗 / unify patient IDs (patient_sn、住院号 inpatient、门诊号 outpatient) / organize multi-document patient texts (多次住院病史、病理报告、多次影像检查) / run or adapt the reading-pipeline example. Also covers port-forward tunnels (本地 18000 → spark 8000) and shared-GPU etiquette.
+description: "Connect to the lab spark clinical-LLM server and run medical-record reading (病历读取/病史提取) workflows. Use whenever the user wants to: connect to spark / set up lab-connect or EasyConnect jump-host SSH / call clinical-qwen36-35b or clinical-qwen3-4b / do 病历读取、病史结构化提取、文本清洗 / unify patient IDs (patient_sn、住院号 inpatient、门诊号 outpatient) / organize multi-document patient texts (多次住院病史、病理报告、多次影像检查) / run or adapt the reading-pipeline example. Also covers port-forward tunnels (本地 18000 → spark 8000) and shared-GPU etiquette."
 ---
 
 # dprlab-reading — spark 临床模型连接与病历读取
