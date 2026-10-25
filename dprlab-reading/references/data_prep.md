@@ -57,17 +57,27 @@ SYNTH0001  | 0000674896      | —                | 检查表  |
 
 一个患者多次住院 → 多份文书。三种策略，按研究问题选：
 
-1. **选择单一文书**（BRAF n316 的做法）：整段病程信息最全的那份（常是**末次或最长**的
-   conclusion）。必须留审计字段：`selected_note_n`（选了第几份）、`last_note_len`、
-   `longest_rank_from_last`、`middle_longest_len` 等，让人工可复查"为什么选这份"。
-2. **按时间序拼接**：适合事件分散在多次住院的场景。拼接时插入分隔标记
-   （`【第N次住院 YYYY-MM-DD】`），给模型时间锚点。
+1. **选摘**（BRAF n316 的 316 例做法）：按时间排序后取**最后 2 次 + 最长一次 +
+   最长与最后一次之间最长的一次**（`build_formatted_history`），并保留审计字段
+   `selected_note_n / selection_mode / last_note_len / max_note_len / length_gap_vs_max /
+   last_is_longest / longest_rank_from_last / middle_longest_rank_from_last /
+   middle_longest_len`，人工可复查"为什么选这几段"。
+2. **全量按时间拼接**（BRAF n316 的 25,427 例 `crc_full` 做法）：不选摘，把该患者所有
+   门诊记录格式化后用换行拼接。文本最长、上下文最全；适合"信息可能出现在任何一次"的场景，
+   但人均 2.5 万字，提取成本高。
 3. **逐份抽取再合并**：文书很长或研究问题按住院划分时；抽取结果在 merge 层按
    (patient_sn, 事件键) 去重。
+
+> 以上在 BRAF n316 里的**具体实现**（字段、排序、去重键、审计列、门诊 vs 住院）见
+> `references/braf_n316_processing.md` §1–2。注意本项目两份主要输入都**只含门诊记录**：
+> 25,427 例是全量拼接、316 例是选摘；住院现病史、病理、随访日期是另外的派生流程。
 
 ### 病理报告
 
 - 通常一份报告一个标本：组织 `(patient_sn, 标本号/报告日期)`；文本常含"免疫组化/基因检测"段。
+- BRAF n316 的实际做法：`cleaning.ipynb` 把全部病理按 `patient_sn, exam_date` 排序后
+  格式化为 `【病理号】/【病理ID】/【检查日期】/【检查名称】/【检查结论】` 并拼接；详见
+  `references/braf_n316_processing.md` §3。
 - BRAF n316 的做法：单独一轮提取任务专抽病理/分子特征（如 BRAF 状态），与病史提取的
   结果在患者级合并，而不是混在病史任务里。
 - 注意病理报告的"印象/结论"与"描述"要分开抽，防止把"待查/建议加做"当成结论。
@@ -89,6 +99,14 @@ SYNTH0001  | 0000674896      | —                | 检查表  |
    治疗窗结束日期缺失时先标 `open`，待治疗方案提取全量跑完后重跑即得 `closed` 精确窗；
 6. **覆盖度审计**：每人检查次数、首末检查日期、窗内条数（`patient_exam_coverage`），
    评估"谁的影像证据够回答研究问题"。
+
+### 随访日期（OS/删失）——本项目有独立流程
+
+`followup_time_utils.build_followup_time_table` 把门诊随访、院内随访、大数据随访合成
+患者级结局表：死亡日期优先 `surv2.death_date`；删失优先 `surv0.date_of_note` 与 surv1
+非死亡随访；`surv2.last_follow_up_time` 只作质控；输出 `followup_final.csv` +
+`followup_qc.csv`（含 `needs_manual_review`）。完整规则见
+`references/braf_n316_processing.md` §4。随访日期不要自行推断——有 QC 表就逐条处理。
 
 ## 产出物标准
 

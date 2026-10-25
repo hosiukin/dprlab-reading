@@ -63,7 +63,8 @@ description: Connect to the lab spark clinical-LLM server and run medical-record
 
 然后按三篇 reference 推进：
 
-- **2b/2c 数据准备** → `references/data_prep.md`：表格清洗（GBK 编码、错位表头、重复行）、
+- **2b/2c 数据准备** → `references/data_prep.md` + `references/braf_n316_processing.md`：
+  通用策略与本项目实际口径（门诊全量 vs 门诊选摘、住院现病史、病理拼接、随访日期判定）；表格清洗（GBK 编码、错位表头、重复行）、
   **patient_sn 唯一标识符 + 保留 inpatient/outpatient ID 建映射表**、
   同一患者多次文本资料整理（病史多文档选择/归并、病理报告、多次影像检查组织与治疗窗对齐）。
 - **2d 读取策略** → `references/methodology.md`：温度 0 + 关思考 + 严格 JSON、
