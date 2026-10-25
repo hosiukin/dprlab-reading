@@ -101,6 +101,20 @@
 **复用建议**：随访日期是最容易出错的部分，保留 QC 表并逐条处理 `needs_manual_review`，
 不要把 `surv2` 的"最后随访"直接当删失日期。
 
+### 4.1 注册的数据集（平台内）
+
+- `followup`（type=table）：`followup_final.csv`，25,427 行 × 37 列，含
+  `death_flag_final, death_date_final, death_source_final, last_contact_final,
+  last_contact_source_final, os_date_final` 及 11 个 QC 标志；列含义、来源表、派生步骤、
+  优先级规则、caveats 全部写在随数据分发的 `followup_manifest.json` 里。
+- `followup_qc.csv`：5,609 名 `needs_manual_review=True` 的患者（19 列），正式生存分析前
+  必须逐条确认。
+- 工作区软链：`data/followup_final.csv`、`data/followup_qc.csv`、`data/followup_manifest.json`。
+- 工具：`dataset_info("followup")` 看列含义/规则；`dataset_get(patient_sn, "followup")`
+  取单人结局；`dataset_search(keyword, "followup")` 跨列搜索。
+- **纪律**：这是结局表不是原始随访记录；`surv2.last_follow_up_time` 不能当删失日期；
+  QC 未处理前不得用于正式 Kaplan-Meier/Cox。
+
 ## 5. 与本 skill 的关系
 
 - 本 skill 的 `data_prep.md` 给的是通用策略（编码/表头/ID/多文档）；本篇是 BRAF n316 的
