@@ -8,7 +8,7 @@
 用法：
   python build_research_db.py \
     --src /srv/spark-shared/datasets/n25427/hzq_original \
-    --out /srv/spark-shared/datasets/n25427/research.sqlite \
+    --out /srv/spark-work/.spark-shared-datasets/n25427/research.sqlite \
     --followup /srv/spark-shared/datasets/followup/followup_final.csv
 
 注意：脚本只打印聚合计数，不打印患者行；患者数据不要离开内网。
