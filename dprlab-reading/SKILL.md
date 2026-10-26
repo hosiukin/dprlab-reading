@@ -61,6 +61,20 @@ description: "Connect to the lab spark clinical-LLM server and run medical-recor
 **先摸底再动手**（2a）：问清用户有什么表格（病史/病理/影像检查）、ID 字段叫什么、想提取什么字段。
 不要预设用范例管线；数据形态和目标字段由用户定义。
 
+**如果是医院 HIS raw 导出（n25427 结构，22 张 GBK CSV、表头第 3 行）**：
+先读 `references/raw_export_schema.md`，再决定是否直接建库：
+
+- `patient_sn` 是唯一主键；`patient_id`、住院号 `inpatient_no_id`、门诊号 `outpatient_no_id`
+  是患者属性，保留前导零，不能当跨表主键；
+- 这套导出没有 visit_id，住院/门诊就诊要用 admission/discharge/note 日期构造；
+- 表分工：门诊/出院/现病史/术后病程、CT/MRI/结肠镜、病理、免疫组化/基因/MSI/肿标、
+  手术/放疗、大数据/院内随访；
+- **免疫组化表只有项目名和时间，没有结果列**，不要因为出现 MLH1/MSH2 行就推断阳性；
+- 用 `scripts/build_research_db.py` 构建 SQLite（`patients`、`outpatient_notes`、
+  `inpatient_visits`、`exams`、`pathology`、`molecular_gene`、`tumor_markers`、
+  `surgery`、`followup_events`、`outcomes`、`patient_timeline`）。
+- 原始数据和生成的 DB 都是患者级数据：只在内网、绝不入 Git/云端。
+
 然后按三篇 reference 推进：
 
 - **2b/2c 数据准备** → `references/data_prep.md` + `references/braf_n316_processing.md`：
