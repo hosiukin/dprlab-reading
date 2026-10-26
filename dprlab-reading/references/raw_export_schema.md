@@ -27,9 +27,9 @@ pd.read_csv(path, encoding="gbk", header=2, dtype=str, keep_default_na=False)
 | 字段 | 含义 | 使用方式 |
 |---|---|---|
 | `patient_sn` | 患者唯一流水号（本项目主键） | **所有表用 `patient_sn` 关联**；25,427 例唯一 |
-| `patient_id` | 医院患者 ID | 1:1 属性，保留 TEXT；有 2 个空值；**不要拿它当跨表主键** |
-| `inpatient_no_id` | 住院号 | 保留前导零（TEXT）；基线/病史表中每个患者 1 个，25,426 非空；**不是每次住院一个号** |
-| `outpatient_no_id` | 门诊号 | 保留前导零（TEXT）；25,190 非空；同样不是每次就诊一个号 |
+| `patient_id` | 医院患者 ID | 每个 patient_sn 一个属性；25,426 个非空、不保证跨患者唯一；保留 TEXT，**不要拿它当跨表主键** |
+| `inpatient_no_id` | 住院号 | 保留前导零（TEXT）；每个患者一个属性，25,426 非空；**不是每次住院一个号** |
+| `outpatient_no_id` | 门诊号 | 保留前导零（TEXT）；25,190 个非空；每个患者一个，但**不保证跨患者唯一**，也不是每次就诊一个号 |
 | `vsn_*` | 导出记录/版本号（如 `vsn_CT`、`vsn_discharge_record`） | 行级来源标识，不是患者号 |
 | `exam_id` / `pathology_id` / `pathology_exam_id` | 检查/病理报告 ID | 报告级去重与回溯 |
 
